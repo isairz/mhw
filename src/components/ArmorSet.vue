@@ -17,7 +17,7 @@
             <div>{{item.slots}}</div>
           </td>
           <td>
-            <div v-for="(level, name) in sumSkill(set)">
+            <div v-for="(level, name) in sumSkill(set)" :key="`${name} ${level}`">
               <span>{{name}} {{level}}</span>
             </div>
           </td>

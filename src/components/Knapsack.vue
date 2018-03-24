@@ -1,5 +1,6 @@
 <template>
   <div class="hello">
+    <skill-input></skill-input>
     <armor-set :sets="result"></armor-set>
     <armor-list :armors="candidate"></armor-list>
   </div>
@@ -7,9 +8,11 @@
 
 <script>
 import { mapState } from "vuex";
+import * as _ from "lodash";
 
 import ArmorSet from "./ArmorSet.vue";
 import ArmorList from "./ArmorList.vue";
+import SkillInput from "./SkillInput.vue";
 
 function find(armors, parts, filter) {
   this.result = result;
@@ -17,12 +20,13 @@ function find(armors, parts, filter) {
 
 export default {
   name: "Knapsack",
-  components: { ArmorSet, ArmorList },
+  components: { ArmorSet, ArmorList, SkillInput },
   mounted() {
     this.$store.dispatch("loadDatabase");
   },
+  methods: {},
   computed: {
-    ...mapState(["parts", "armors"]),
+    ...mapState(["parts", "armors", "skills"]),
 
     candidate() {
       return this.armors.filter(a => {
@@ -71,7 +75,8 @@ export default {
   },
   data() {
     return {
-      filter: { "가드 성능": 3, 포술: 3, "체력 증강": 2 }
+      filter: { "가드 성능": 3, 포술: 3, "체력 증강": 2 },
+      tags: []
     };
   }
 };
