@@ -1,9 +1,12 @@
 <template>
-  <div class="hello">
-    <skill-input></skill-input>
-    <armor-set :sets="result"></armor-set>
-    <armor-list :armors="candidate"></armor-list>
-  </div>
+  <section class="section">
+    <div class="container">
+      <skill-input @input="submit"></skill-input>
+      {{ filter }}
+      <armor-set :sets="result"></armor-set>
+      <armor-list :armors="candidate"></armor-list>
+    </div>
+  </section>
 </template>
 
 <script>
@@ -24,7 +27,15 @@ export default {
   mounted() {
     this.$store.dispatch("loadDatabase");
   },
-  methods: {},
+  methods: {
+    submit(tags) {
+      let newFilter = {};
+      for (let tag of tags) {
+        if (tag.level > 0) newFilter[tag.name] = tag.level;
+      }
+      this.filter = newFilter;
+    }
+  },
   computed: {
     ...mapState(["parts", "armors", "skills"]),
 

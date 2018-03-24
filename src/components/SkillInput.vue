@@ -2,7 +2,7 @@
   <div>
     <section>
       <b-field v-for="tag in tags" horizontal :label="tag.name">
-        <b-input v-model="tag.level" type="number" :min="tag.min" :max="tag.max"></b-input>
+        <b-input v-model="tag.level" type="number" :min="tag.min" :max="tag.max" @input="changeLevel"></b-input>
       </b-field>
       <b-field grouped>
         <b-autocomplete
@@ -34,6 +34,9 @@ export default {
       this.$nextTick(() => {
         this.newTag = "";
       });
+    },
+    changeLevel() {
+      this.$emit("input", this.tags);
     },
     addTag(tag) {
       const tagToAdd = {
