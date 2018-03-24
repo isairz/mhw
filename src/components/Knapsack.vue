@@ -1,7 +1,7 @@
 <template>
   <div class="hello">
     <armor-set :sets="result"></armor-set>
-    {{ checkTime }}
+    <armor-list :armors="candidate"></armor-list>
   </div>
 </template>
 
@@ -9,42 +9,69 @@
 import { mapState } from "vuex";
 
 import ArmorSet from "./ArmorSet.vue";
+import ArmorList from "./ArmorList.vue";
+
+function find(armors, parts, filter) {
+  this.result = result;
+}
 
 export default {
   name: "Knapsack",
-  components: { ArmorSet },
+  components: { ArmorSet, ArmorList },
   mounted() {
     this.$store.dispatch("loadDatabase");
   },
   computed: {
-    ...mapState(["byParts", "skills"]),
+    ...mapState(["parts", "armors"]),
 
-    checkTime() {
+    candidate() {
+      return this.armors.filter(a => {
+        if (a.set_level === "하위") return false;
+        for (let s of a.skills) {
+          if (this.filter[s.name]) return true;
+        }
+        return false;
+      });
+    },
+
+    result() {
+      const { filter } = this;
       const start = Date.now();
-      let count = 0;
-      const { byParts, result } = this;
+      let result = [];
       let now = [];
-      let skills = {};
-      function recur(i) {
+
+      const byParts = this.parts.map(part =>
+        this.candidate.filter(armor => armor.part === part)
+      );
+
+      function recur(i, skill) {
         if (i == byParts.length) {
-          count += 1;
+          for (let f in filter) {
+            if (!skill.hasOwnProperty(f)) return;
+            if (skill[f] < filter[f]) return;
+          }
           result.push([...now]);
           return;
         }
         for (let a of byParts[i]) {
-          if (count >= 5) return;
+          // if (result.length >= 5) return;
+          let nextSkill = { ...skill };
+          for (let s of a.skills) {
+            if (nextSkill.hasOwnProperty(s.name)) nextSkill[s.name] += s.level;
+            else nextSkill[s.name] = s.level;
+          }
           now[i] = a;
-          skills[a.skills[i]];
-          recur(i + 1);
+          recur(i + 1, nextSkill);
         }
       }
-      recur(0);
-      return { count, time: Date.now() - start };
+      recur(0, {});
+      console.log(Date.now() - start);
+      return result;
     }
   },
   data() {
     return {
-      result: []
+      filter: { "가드 성능": 3, 포술: 3, "체력 증강": 2 }
     };
   }
 };

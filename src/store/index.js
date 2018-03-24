@@ -10,8 +10,7 @@ const debug = process.env.NODE_ENV !== "production";
 const state = {
   armors: [],
   skills: [],
-  parts: ["머리", "몸통", "팔", "허리", "다리"],
-  byParts: []
+  parts: ["머리", "몸통", "팔", "허리", "다리"]
 };
 
 const getters = {};
@@ -30,9 +29,6 @@ const actions = {
 const mutations = {
   setArmors(state, armors) {
     state.armors = armors;
-    state.byParts = state.parts.map(part =>
-      armors.filter(armor => armor.part === part && armor.set_level !== "하위")
-    );
   },
   setSkills(state, skills) {
     state.skills = skills;
